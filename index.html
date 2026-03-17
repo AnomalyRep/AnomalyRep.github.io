@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Arvin · App Developer & Backend Engineer</title>
+  <meta name="description" content="Mahasiswa Teknik Informatika ISTN, App Developer & Backend Engineer. Juara Developer Day 2025." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --accent: #1D9E75;
+      --accent-dark: #0F6E56;
+      --accent-light: rgba(29,158,117,0.08);
+      --bg: #fafaf8;
+      --bg2: #f2f1ee;
+      --text: #1a1a18;
+      --text2: #6b6b66;
+      --text3: #9e9e99;
+      --border: rgba(0,0,0,0.08);
+      --border2: rgba(0,0,0,0.14);
+      --card: #ffffff;
+      --syne: 'Syne', sans-serif;
+      --body: 'DM Sans', sans-serif;
+      --radius: 12px;
+      --radius-sm: 8px;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #111110;
+        --bg2: #1a1a18;
+        --text: #f0efe9;
+        --text2: #9e9e99;
+        --text3: #666662;
+        --border: rgba(255,255,255,0.08);
+        --border2: rgba(255,255,255,0.14);
+        --card: #1a1a18;
+        --accent-light: rgba(29,158,117,0.12);
+      }
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--body);
+      font-size: 15px;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── LAYOUT ── */
+    .container {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: var(--bg);
+      border-bottom: 0.5px solid var(--border);
+      padding: 16px 0;
+      backdrop-filter: blur(8px);
+    }
+    .nav-inner {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 0 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .nav-brand {
+      font-family: var(--syne);
+      font-size: 17px;
+      font-weight: 800;
+      letter-spacing: -0.3px;
+      text-decoration: none;
+      color: var(--text);
+    }
+    .nav-brand span { color: var(--accent); }
+    .nav-links { display: flex; gap: 20px; list-style: none; }
+    .nav-links a {
+      font-size: 13px;
+      color: var(--text2);
+      text-decoration: none;
+      font-weight: 400;
+      transition: color 0.15s;
+    }
+    .nav-links a:hover { color: var(--text); }
+
+    /* ── HERO ── */
+    .hero {
+      padding: 80px 0 64px;
+      opacity: 0;
+      animation: fadeUp 0.6s ease forwards;
+    }
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--accent-dark);
+      background: var(--accent-light);
+      padding: 6px 14px;
+      border-radius: 100px;
+      margin-bottom: 28px;
+      border: 0.5px solid rgba(29,158,117,0.2);
+    }
+    .status-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--accent);
+      animation: pulse 2s ease-in-out infinite;
+    }
+    .hero h1 {
+      font-family: var(--syne);
+      font-size: clamp(40px, 7vw, 58px);
+      font-weight: 800;
+      line-height: 1.02;
+      letter-spacing: -2px;
+      margin-bottom: 20px;
+    }
+    .hero h1 .muted {
+      color: var(--text2);
+      font-weight: 400;
+    }
+    .hero-bio {
+      font-size: 15px;
+      color: var(--text2);
+      line-height: 1.85;
+      max-width: 520px;
+      margin-bottom: 28px;
+      font-weight: 300;
+    }
+    .hero-bio strong { color: var(--text); font-weight: 500; }
+    .hero-meta {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+    .meta-item {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 12px;
+      color: var(--text3);
+    }
+    .meta-item svg { color: var(--accent); flex-shrink: 0; }
+
+    /* ── DIVIDER ── */
+    .divider {
+      height: 0.5px;
+      background: var(--border);
+      margin: 52px 0;
+    }
+
+    /* ── SECTION LABEL ── */
+    .sec-label {
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text3);
+      font-weight: 500;
+      margin-bottom: 24px;
+    }
+
+    /* ── SKILLS ── */
+    .skills-wrap {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .skill-pill {
+      display: inline-flex;
+      align-items: center;
+      font-size: 13px;
+      padding: 6px 14px;
+      border: 0.5px solid var(--border2);
+      border-radius: 100px;
+      color: var(--text);
+      font-weight: 400;
+      background: var(--card);
+      transition: border-color 0.15s;
+    }
+    .skill-pill:hover { border-color: var(--accent); }
+    .skill-pill.hl {
+      border-color: rgba(29,158,117,0.35);
+      color: var(--accent-dark);
+      background: var(--accent-light);
+      font-weight: 500;
+    }
+
+    /* ── FEATURED PROJECT ── */
+    .featured {
+      border: 0.5px solid var(--border2);
+      border-radius: var(--radius);
+      padding: 28px 28px 24px;
+      background: var(--card);
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.2s;
+    }
+    .featured:hover { border-color: var(--accent); }
+    .featured::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2.5px;
+      background: linear-gradient(90deg, var(--accent), #5DCAA5);
+    }
+    .feat-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--accent-dark);
+      background: var(--accent-light);
+      padding: 4px 10px;
+      border-radius: 4px;
+      margin-bottom: 16px;
+      border: 0.5px solid rgba(29,158,117,0.2);
+    }
+    .feat-title {
+      font-family: var(--syne);
+      font-size: 26px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      margin-bottom: 10px;
+    }
+    .feat-subtitle {
+      font-size: 13px;
+      color: var(--accent-dark);
+      font-weight: 500;
+      margin-bottom: 12px;
+    }
+    .feat-desc {
+      font-size: 14px;
+      color: var(--text2);
+      line-height: 1.8;
+      margin-bottom: 18px;
+      font-weight: 300;
+      max-width: 580px;
+    }
+    .feat-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin-bottom: 14px;
+    }
+    .ftag {
+      font-size: 11px;
+      padding: 4px 10px;
+      border: 0.5px solid var(--border2);
+      border-radius: 100px;
+      color: var(--text2);
+    }
+    .feat-note {
+      font-size: 12px;
+      color: var(--text3);
+      font-style: italic;
+    }
+
+    /* ── PROJECT LIST ── */
+    .proj-list { display: flex; flex-direction: column; }
+    .proj-item {
+      display: grid;
+      grid-template-columns: 32px 1fr 20px;
+      gap: 16px;
+      align-items: start;
+      padding: 20px 0;
+      border-bottom: 0.5px solid var(--border);
+      transition: background 0.15s;
+    }
+    .proj-item:first-child { border-top: 0.5px solid var(--border); }
+    .proj-num { font-size: 11px; color: var(--text3); padding-top: 3px; font-weight: 500; }
+    .proj-name { font-family: var(--syne); font-size: 15px; font-weight: 700; margin-bottom: 5px; letter-spacing: -0.2px; }
+    .proj-desc { font-size: 13px; color: var(--text2); line-height: 1.7; font-weight: 300; }
+    .proj-chips { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 10px; }
+    .chip {
+      font-size: 10px;
+      padding: 3px 8px;
+      border: 0.5px solid var(--border);
+      border-radius: 100px;
+      color: var(--text3);
+    }
+    .proj-arrow { color: var(--text3); font-size: 16px; padding-top: 3px; }
+
+    /* ── ABOUT GRID ── */
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    @media (max-width: 480px) {
+      .about-grid { grid-template-columns: 1fr; }
+    }
+    .about-card {
+      background: var(--bg2);
+      border-radius: var(--radius-sm);
+      padding: 16px 18px;
+    }
+    .about-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--text3);
+      margin-bottom: 6px;
+      font-weight: 500;
+    }
+    .about-val { font-size: 13px; font-weight: 500; line-height: 1.5; }
+
+    /* ── CONTACT ── */
+    .contact-blurb {
+      font-size: 14px;
+      color: var(--text2);
+      line-height: 1.8;
+      max-width: 480px;
+      font-weight: 300;
+      margin-bottom: 20px;
+    }
+    .contact-links { display: flex; gap: 10px; flex-wrap: wrap; }
+    .c-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      text-decoration: none;
+      padding: 10px 18px;
+      border: 0.5px solid var(--border2);
+      border-radius: 100px;
+      color: var(--text);
+      font-weight: 400;
+      transition: border-color 0.15s, color 0.15s, background 0.15s;
+    }
+    .c-link:hover { border-color: var(--accent); color: var(--accent); }
+    .c-link.primary {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+      font-weight: 500;
+    }
+    .c-link.primary:hover { background: var(--accent-dark); border-color: var(--accent-dark); }
+
+    /* ── FOOTER ── */
+    footer {
+      padding: 32px 0 48px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      font-size: 11px;
+      color: var(--text3);
+      border-top: 0.5px solid var(--border);
+      margin-top: 52px;
+    }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50%       { opacity: 0.5; transform: scale(0.85); }
+    }
+
+    section {
+      opacity: 0;
+      transform: translateY(12px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+    section.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 600px) {
+      .hero { padding: 52px 0 40px; }
+      .nav-links { display: none; }
+      .feat-title { font-size: 22px; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="nav-inner">
+      <a class="nav-brand" href="#">Arvin<span>.</span></a>
+      <ul class="nav-links">
+        <li><a href="#skills">keahlian</a></li>
+        <li><a href="#projects">proyek</a></li>
+        <li><a href="#contact">kontak</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <div class="container">
+
+    <!-- HERO -->
+    <div class="hero">
+      <div class="status-badge">
+        <span class="status-dot"></span>
+        Terbuka untuk magang
+      </div>
+      <h1>App Developer<br><span class="muted">& Backend Engineer</span></h1>
+      <p class="hero-bio">
+        Mahasiswa <strong>Teknik Informatika ISTN</strong>, angkatan 2023 — semester 6.
+        Gw suka ngulik cara kerja aplikasi dari dalam: mulai dari bikin sendiri pakai Flutter
+        sampai memahami bagaimana sistem Android bekerja di level yang lebih dalam.
+        Kalau ada yang gw tidak mengerti, gw cari tahu sampai paham.
+      </p>
+      <div class="hero-meta">
+        <div class="meta-item">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          Jakarta, Indonesia
+        </div>
+        <div class="meta-item">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+          ISTN · S1 Teknik Informatika
+        </div>
+        <div class="meta-item">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          Juara Developer Day 2025
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- SKILLS -->
+    <section id="skills">
+      <div class="sec-label">keahlian</div>
+      <div class="skills-wrap">
+        <span class="skill-pill hl">Flutter</span>
+        <span class="skill-pill hl">Dart</span>
+        <span class="skill-pill hl">Node.js</span>
+        <span class="skill-pill hl">REST API</span>
+        <span class="skill-pill hl">Supabase</span>
+        <span class="skill-pill">GitHub</span>
+        <span class="skill-pill">Pterodactyl</span>
+        <span class="skill-pill">Android Internals</span>
+        <span class="skill-pill">Play Integrity</span>
+        <span class="skill-pill">App Security</span>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- PROJECTS -->
+    <section id="projects">
+      <div class="sec-label">proyek unggulan</div>
+
+      <div class="featured">
+        <div class="feat-badge">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          Juara · Developer Day 2025
+        </div>
+        <div class="feat-title">RespondSigap / CivicSense</div>
+        <div class="feat-subtitle">Dipresentasikan di Taiwan sebagai CivicSense</div>
+        <p class="feat-desc">
+          Aplikasi pelaporan kejadian real-time yang didukung AI — dari kebakaran, keributan,
+          hingga demo. User cukup foto, AI langsung bantu generate laporan otomatis lengkap
+          dengan deskripsi kejadian. Dirancang untuk mempercepat respons masyarakat terhadap
+          situasi darurat di Indonesia.
+        </p>
+        <div class="feat-tags">
+          <span class="ftag">Flutter</span>
+          <span class="ftag">Dart</span>
+          <span class="ftag">AI API</span>
+          <span class="ftag">Supabase</span>
+          <span class="ftag">REST API</span>
+        </div>
+        <p class="feat-note">Dikembangkan dari nol, menang Developer Day 2025, dan dipresentasikan di kompetisi internasional Taiwan</p>
+      </div>
+
+      <div style="margin-top: 32px; margin-bottom: 24px;" class="sec-label">proyek lainnya</div>
+      <div class="proj-list">
+        <div class="proj-item">
+          <div class="proj-num">01</div>
+          <div>
+            <div class="proj-name">Flutter Personal Tools</div>
+            <p class="proj-desc">Koleksi aplikasi Flutter yang dibuat untuk kemudahan diri sendiri — dari utilitas harian sampai tools produktivitas. Filosofinya sederhana: kalau ada yang ribet, bikin sendiri solusinya.</p>
+            <div class="proj-chips">
+              <span class="chip">Flutter</span>
+              <span class="chip">Dart</span>
+              <span class="chip">Self-use Tools</span>
+            </div>
+          </div>
+          <div class="proj-arrow">↗</div>
+        </div>
+
+        <div class="proj-item">
+          <div class="proj-num">02</div>
+          <div>
+            <div class="proj-name">Android Security Research</div>
+            <p class="proj-desc">Ngulik cara kerja aplikasi dari dalam — memahami bagaimana Play Integrity, root detection, dan keamanan aplikasi Android bekerja. Bukan untuk merusak, tapi untuk benar-benar mengerti sistemnya.</p>
+            <div class="proj-chips">
+              <span class="chip">Android</span>
+              <span class="chip">Security</span>
+              <span class="chip">Play Integrity</span>
+              <span class="chip">Reverse Engineering</span>
+            </div>
+          </div>
+          <div class="proj-arrow">↗</div>
+        </div>
+
+        <div class="proj-item">
+          <div class="proj-num">03</div>
+          <div>
+            <div class="proj-name">Backend & API Projects</div>
+            <p class="proj-desc">Eksplorasi Node.js dan Supabase untuk membangun backend yang scalable — REST API, autentikasi, dan database integration untuk mendukung aplikasi mobile.</p>
+            <div class="proj-chips">
+              <span class="chip">Node.js</span>
+              <span class="chip">Supabase</span>
+              <span class="chip">REST API</span>
+              <span class="chip">PostgreSQL</span>
+            </div>
+          </div>
+          <div class="proj-arrow">↗</div>
+        </div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- ABOUT -->
+    <section id="about">
+      <div class="sec-label">tentang</div>
+      <div class="about-grid">
+        <div class="about-card">
+          <div class="about-label">Institusi</div>
+          <div class="about-val">Institut Sains & Teknologi Nasional (ISTN)</div>
+        </div>
+        <div class="about-card">
+          <div class="about-label">Status</div>
+          <div class="about-val">Semester 6 · Aktif sejak 2023</div>
+        </div>
+        <div class="about-card">
+          <div class="about-label">Fokus</div>
+          <div class="about-val">App Developer & Backend Engineer</div>
+        </div>
+        <div class="about-card">
+          <div class="about-label">Pencapaian</div>
+          <div class="about-val">Juara Developer Day 2025 · Presentasi Taiwan</div>
+        </div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- CONTACT -->
+    <section id="contact">
+      <div class="sec-label">kontak</div>
+      <p class="contact-blurb">
+        Lagi nyari kesempatan magang di bidang mobile development atau backend.
+        Kalau tertarik ngobrol, ada project yang cocok, atau sekadar mau diskusi soal Flutter dan Android — reach out aja.
+      </p>
+      <div class="contact-links">
+        <a class="c-link primary" href="mailto:EMAIL_LO_DISINI">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,12 2,6"/></svg>
+          Kirim Email
+        </a>
+        <a class="c-link" href="https://github.com/AnomalyRep" target="_blank" rel="noopener">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+          GitHub
+        </a>
+        <a class="c-link" href="LINKEDIN_LO_DISINI" target="_blank" rel="noopener">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+          LinkedIn
+        </a>
+      </div>
+    </section>
+
+  </div><!-- /container -->
+
+  <div class="container">
+    <footer>
+      <span>© 2026 Arvin · Jakarta, ID</span>
+      <span>Teknik Informatika · ISTN · 2023</span>
+    </footer>
+  </div>
+
+  <script>
+    // Scroll reveal
+    const sections = document.querySelectorAll('section');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+          observer.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.08 });
+    sections.forEach(s => observer.observe(s));
+  </script>
+
+</body>
+</html>
