@@ -98,11 +98,26 @@
     }
     .nav-links a:hover { color: var(--text); }
 
+    /* ── PENDULUM BG ── */
+    #pendulum-bg {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.28;
+    }
+    @media (prefers-color-scheme: dark) {
+      #pendulum-bg { opacity: 0.18; }
+    }
+
     /* ── HERO ── */
     .hero {
       padding: 80px 0 64px;
       opacity: 0;
       animation: fadeUp 0.6s ease forwards;
+      position: relative;
+      z-index: 1;
     }
     .status-badge {
       display: inline-flex;
@@ -399,6 +414,8 @@
 </head>
 <body>
 
+  <canvas id="pendulum-bg"></canvas>
+
   <nav>
     <div class="nav-inner">
       <a class="nav-brand" href="#">Arvin<span>.</span></a>
@@ -595,6 +612,136 @@
       <span>Teknik Informatika · ISTN · 2023</span>
     </footer>
   </div>
+
+  <script>
+    // Pendulum background
+    (function() {
+      const canvas = document.getElementById('pendulum-bg');
+      const ctx = canvas.getContext('2d');
+      let W, H;
+
+      function resize() {
+        W = canvas.width = window.innerWidth;
+        H = canvas.height = window.innerHeight;
+      }
+      resize();
+      window.addEventListener('resize', resize);
+
+      const g = 9.81;
+      const dt = 0.042;
+      const isDark = () => window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+      // Spawn multiple pendulums at different positions & angles
+      const PENDS = [
+        { ox: 0.18, l1: 140, l2: 110, m1: 11, m2: 9,  a1: 2.2,  a2: -0.8, v1: 0, v2: 0, color: '#1D9E75', trailColor: '#1D9E75' },
+        { ox: 0.82, l1: 120, l2: 100, m1: 10, m2: 8,  a1: -1.9, a2: 1.1,  v1: 0, v2: 0, color: '#1D9E75', trailColor: '#1D9E75' },
+        { ox: 0.5,  l1: 160, l2: 90,  m1: 13, m2: 10, a1: 2.8,  a2: -1.4, v1: 0, v2: 0, color: '#5DCAA5', trailColor: '#5DCAA5' },
+      ];
+      const OY_RATIO = 0.22;
+      const trails = PENDS.map(() => []);
+      const MAX_TRAIL = 600;
+
+      function derivs(s) {
+        const { a1, a2, v1, v2, l1, l2, m1, m2 } = s;
+        const da = a1 - a2;
+        const D = 2 * m1 + m2 - m2 * Math.cos(2 * da);
+        const da1 = (-g * (2 * m1 + m2) * Math.sin(a1)
+          - m2 * g * Math.sin(a1 - 2 * a2)
+          - 2 * Math.sin(da) * m2 * (v2 * v2 * l2 + v1 * v1 * l1 * Math.cos(da))) / (l1 * D);
+        const da2 = (2 * Math.sin(da) * (v1 * v1 * l1 * (m1 + m2)
+          + g * (m1 + m2) * Math.cos(a1)
+          + v2 * v2 * l2 * m2 * Math.cos(da))) / (l2 * D);
+        return { da1, da2 };
+      }
+
+      function rk4(s) {
+        const h = dt;
+        const k1 = derivs(s);
+        const s2 = { ...s, a1: s.a1+h/2*s.v1, a2: s.a2+h/2*s.v2, v1: s.v1+h/2*k1.da1, v2: s.v2+h/2*k1.da2 };
+        const k2 = derivs(s2);
+        const s3 = { ...s, a1: s.a1+h/2*s.v1, a2: s.a2+h/2*s.v2, v1: s.v1+h/2*k2.da1, v2: s.v2+h/2*k2.da2 };
+        const k3 = derivs(s3);
+        const s4 = { ...s, a1: s.a1+h*s.v1, a2: s.a2+h*s.v2, v1: s.v1+h*k3.da1, v2: s.v2+h*k3.da2 };
+        const k4 = derivs(s4);
+        return { ...s,
+          a1: s.a1+h/6*(s.v1+2*s2.v1+2*s3.v1+s4.v1),
+          a2: s.a2+h/6*(s.v2+2*s2.v2+2*s3.v2+s4.v2),
+          v1: s.v1+h/6*(k1.da1+2*k2.da1+2*k3.da1+k4.da1),
+          v2: s.v2+h/6*(k1.da2+2*k2.da2+2*k3.da2+k4.da2)
+        };
+      }
+
+      function getPos(s, ox, oy) {
+        const x1 = ox + s.l1 * Math.sin(s.a1);
+        const y1 = oy + s.l1 * Math.cos(s.a1);
+        const x2 = x1 + s.l2 * Math.sin(s.a2);
+        const y2 = y1 + s.l2 * Math.cos(s.a2);
+        return { x1, y1, x2, y2 };
+      }
+
+      function drawFrame() {
+        ctx.clearRect(0, 0, W, H);
+        const dark = isDark();
+        const strokeCol = dark ? 'rgba(255,255,255,0.55)' : 'rgba(0,0,0,0.55)';
+        const pivotCol  = dark ? 'rgba(255,255,255,0.2)'  : 'rgba(0,0,0,0.15)';
+        const bobCol1   = dark ? '#60a5fa' : '#185FA5';
+
+        PENDS.forEach((p, i) => {
+          // step
+          const ns = rk4(p);
+          Object.assign(p, ns);
+
+          const ox = W * p.ox;
+          const oy = H * OY_RATIO;
+          const pos = getPos(p, ox, oy);
+
+          // push trail
+          trails[i].push({ x: pos.x2, y: pos.y2 });
+          if (trails[i].length > MAX_TRAIL) trails[i].shift();
+
+          // draw trail
+          const trail = trails[i];
+          for (let t = 1; t < trail.length; t++) {
+            const alpha = (t / trail.length) * 0.55;
+            ctx.beginPath();
+            ctx.strokeStyle = p.trailColor + Math.round(alpha * 255).toString(16).padStart(2, '0');
+            ctx.lineWidth = 1;
+            ctx.moveTo(trail[t - 1].x, trail[t - 1].y);
+            ctx.lineTo(trail[t].x, trail[t].y);
+            ctx.stroke();
+          }
+
+          // draw rods
+          ctx.strokeStyle = strokeCol;
+          ctx.lineWidth = 1.5;
+          ctx.beginPath(); ctx.moveTo(ox, oy); ctx.lineTo(pos.x1, pos.y1); ctx.stroke();
+          ctx.beginPath(); ctx.moveTo(pos.x1, pos.y1); ctx.lineTo(pos.x2, pos.y2); ctx.stroke();
+
+          // bob 1
+          ctx.beginPath();
+          ctx.fillStyle = bobCol1;
+          ctx.arc(pos.x1, pos.y1, p.m1 * 0.45, 0, Math.PI * 2);
+          ctx.fill();
+
+          // bob 2
+          ctx.beginPath();
+          ctx.fillStyle = p.color;
+          ctx.arc(pos.x2, pos.y2, p.m2 * 0.45, 0, Math.PI * 2);
+          ctx.fill();
+
+          // pivot
+          ctx.beginPath();
+          ctx.fillStyle = pivotCol;
+          ctx.arc(ox, oy, 4, 0, Math.PI * 2);
+          ctx.fill();
+        });
+
+        requestAnimationFrame(drawFrame);
+      }
+
+      drawFrame();
+    })();
+  </script>
 
   <script>
     // Scroll reveal
